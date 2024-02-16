@@ -2,9 +2,14 @@ package main
 
 import (
 	"log"
+
+	"github.com/joshdstockdale/go-truck-tracker/aggregator/client"
 )
 
-var kafkaTopic = "obudata"
+const (
+	kafkaTopic  = "obudata"
+	aggEndpoint = "http://127.0.0.1:3000/aggregate"
+)
 
 func main() {
 	var (
@@ -12,7 +17,8 @@ func main() {
 		svc CalcServicer
 	)
 	svc = NewCalcService()
-	kafkaConsumer, err := NewKafkaConsumer(kafkaTopic, svc)
+	svc = NewLogMiddleware(svc)
+	kafkaConsumer, err := NewKafkaConsumer(kafkaTopic, svc, client.NewClient(aggEndpoint))
 	if err != nil {
 		log.Fatal(err)
 	}

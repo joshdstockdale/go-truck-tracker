@@ -10,4 +10,8 @@ dcalc:
 	@go build -o bin/dcalc ./distance_calculator ;
 	@./bin/dcalc ;
 
-.PHONY: obu receiver dcalc
+aggregator:
+	@go build -o bin/aggregator ./aggregator ;
+	@./bin/aggregator ;
+
+.PHONY: obu receiver dcalc aggregator

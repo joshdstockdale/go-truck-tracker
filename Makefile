@@ -3,7 +3,11 @@ obu:
 	@./bin/obu ;
 
 receiver:
-	@go build -o bin/receiver receiver/main.go ;
+	@go build -o bin/receiver ./receiver ;
 	@./bin/receiver ;
-	
-.PHONY: obu receiver
+
+dcalc:
+	@go build -o bin/dcalc ./distance_calculator ;
+	@./bin/dcalc ;
+
+.PHONY: obu receiver dcalc

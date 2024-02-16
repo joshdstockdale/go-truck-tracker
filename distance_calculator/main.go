@@ -1,7 +1,20 @@
 package main
 
-import "log"
+import (
+	"log"
+)
+
+var kafkaTopic = "obudata"
 
 func main() {
-	log.Println("Distance calculator working!")
+	var (
+		err error
+		svc CalcServicer
+	)
+	svc = NewCalcService()
+	kafkaConsumer, err := NewKafkaConsumer(kafkaTopic, svc)
+	if err != nil {
+		log.Fatal(err)
+	}
+	kafkaConsumer.Start()
 }

@@ -4,28 +4,44 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"net"
 	"net/http"
 	"strconv"
 
 	"github.com/joshdstockdale/go-truck-tracker/types"
+	"google.golang.org/grpc"
 )
 
 func main() {
-	listenAddr := flag.String("listenaddr", ":3000", "listening address")
+	httpAddr := flag.String("httpaddr", ":3000", "listening address of HTTP Server")
+	grpcAddr := flag.String("grpcaddr", ":3001", "listening address of GRPC Server")
 	flag.Parse()
 	var (
 		store = NewMemoryStore()
 		svc   = NewInvoiceAggregator(store)
 	)
 	svc = NewLogMiddleware(svc)
-	makeHttpTransport(*listenAddr, svc)
+	go makeGRPCTransport(*grpcAddr, svc)
+	makeHttpTransport(*httpAddr, svc)
 }
 
 func makeHttpTransport(listenAddr string, svc Aggregator) {
-	fmt.Println("Http transport running on ", listenAddr)
+	fmt.Println("HTTP transport running on ", listenAddr)
 	http.HandleFunc("/aggregate", handleAggregate(svc))
 	http.HandleFunc("/invoice", handleGetInvoice(svc))
 	http.ListenAndServe(listenAddr, nil)
+}
+
+func makeGRPCTransport(listenAddr string, svc Aggregator) error {
+	fmt.Println("GRPC transport running on ", listenAddr)
+	ln, err := net.Listen("TCP", listenAddr)
+	if err != nil {
+		return err
+	}
+	defer ln.Close()
+	server := grpc.NewServer([]grpc.ServerOption{}...)
+	types.RegisterAggregatorServer(server, NewGRPCAggregatorServer(svc))
+	return server.Serve(ln)
 }
 
 func handleGetInvoice(svc Aggregator) http.HandlerFunc {

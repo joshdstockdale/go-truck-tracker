@@ -15,13 +15,14 @@ import (
 )
 
 func main() {
-	httpAddr := flag.String("httpaddr", ":3000", "listening address of HTTP Server")
-	grpcAddr := flag.String("grpcaddr", ":3001", "listening address of GRPC Server")
+	httpAddr := flag.String("httpAddr", ":4000", "listening address of HTTP Server")
+	grpcAddr := flag.String("grpcAddr", ":4001", "listening address of GRPC Server")
 	flag.Parse()
 	var (
 		store = NewMemoryStore()
 		svc   = NewInvoiceAggregator(store)
 	)
+	svc = NewMetricsMiddleware(svc)
 	svc = NewLogMiddleware(svc)
 	go func() {
 		log.Fatal(makeGRPCTransport(*grpcAddr, svc))
@@ -74,6 +75,10 @@ func handleGetInvoice(svc Aggregator) http.HandlerFunc {
 
 func handleAggregate(svc Aggregator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Method not supported"})
+			return
+		}
 		var distance types.Distance
 		if err := json.NewDecoder(r.Body).Decode(&distance); err != nil {
 			writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})

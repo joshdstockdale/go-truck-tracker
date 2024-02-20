@@ -36,12 +36,15 @@ go get google.golang.org/grpc
 
 ## Prometheus
 ```
-docker run --name prometheus -d \
--v ./.config/prometheus.yml:/etc/prometheus/prometheus.yml \
--p 9090:9090 prom/prometheus
+docker run --name prometheus -d -v ./.config/prometheus.yml:/etc/prometheus/prometheus.yml -p 9090:9090 --add-host=host.docker.internal:host-gateway prom/prometheus
 ```
 
 ### Golang client
 ```
 go get github.com/prometheus/client_golang/prometheus
+```
+
+## Grafana
+```
+docker run -d -p 3000:3000 --add-host=host.docker.internal:host-gateway  --name=grafana grafana/grafana-enterprise
 ```

@@ -17,7 +17,7 @@ type apiFunc func(w http.ResponseWriter, r *http.Request) error
 
 func main() {
 	listenAddr := flag.String("listenAddr", ":6000", "Listen address of gateway")
-	aggServiceAddr := flag.String("aggServiceAddr", "http://localhost:3000", "Listen address of Aggregator Service")
+	aggServiceAddr := flag.String("aggServiceAddr", "http://localhost:4000", "Listen address of Aggregator Service")
 	flag.Parse()
 	var (
 		client     = client.NewHTTPClient(*aggServiceAddr)

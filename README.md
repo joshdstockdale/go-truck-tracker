@@ -33,3 +33,15 @@ PATH="${PATH}:${HOME}/go/bin"
 go get google.golang.org/protobuf
 go get google.golang.org/grpc
 ```
+
+## Prometheus
+```
+docker run --name prometheus -d \
+-v ./.config/prometheus.yml:/etc/prometheus/prometheus.yml \
+-p 9090:9090 prom/prometheus
+```
+
+### Golang client
+```
+go get github.com/prometheus/client_golang/prometheus
+```

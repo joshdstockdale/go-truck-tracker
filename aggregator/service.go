@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/joshdstockdale/go-truck-tracker/types"
+	"github.com/sirupsen/logrus"
 )
 
 const basePrice = 2.25
@@ -27,6 +28,11 @@ func NewInvoiceAggregator(store Storer) Aggregator {
 }
 
 func (i *InvoiceAggregator) AggregateDistance(distance types.Distance) error {
+	logrus.WithFields(logrus.Fields{
+		"obuID":    distance.OBUID,
+		"distance": distance.Value,
+		"unix":     distance.Unix,
+	}).Info("Aggregate Distance")
 	return i.store.Insert(distance)
 }
 

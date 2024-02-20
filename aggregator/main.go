@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/joshdstockdale/go-truck-tracker/types"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 )
 
@@ -33,6 +34,7 @@ func makeHttpTransport(listenAddr string, svc Aggregator) error {
 	fmt.Println("HTTP transport running on ", listenAddr)
 	http.HandleFunc("/aggregate", handleAggregate(svc))
 	http.HandleFunc("/invoice", handleGetInvoice(svc))
+	http.Handle("/metrics", promhttp.Handler())
 	return http.ListenAndServe(listenAddr, nil)
 }
 

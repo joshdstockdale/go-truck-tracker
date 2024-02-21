@@ -50,3 +50,18 @@ go get github.com/prometheus/client_golang/prometheus
 ```
 docker run -d -p 3000:3000 --add-host=host.docker.internal:host-gateway  --name=grafana grafana/grafana-enterprise
 ```
+
+
+# Running
+Once all the docker containers above are running: 
+```
+make receiver
+make obu
+make dcalc
+make aggregator
+make gateway
+```
+
+reciever -> localhost:30000/ws
+aggregator -> localhost:4000 (http), localhost:4001 (grpc)
+gateway -> localhost:6000

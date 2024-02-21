@@ -36,11 +36,14 @@ func main() {
 
 func makeHttpTransport(listenAddr string, svc Aggregator) error {
 	var (
-		aggMetrichandler = newHTTPMetricsHandler("aggregate")
-		invMetrichandler = newHTTPMetricsHandler("invoice")
+		aggMetricHandler = newHTTPMetricsHandler("aggregate")
+		invMetricHandler = newHTTPMetricsHandler("invoice")
+		aggregateHandler = makeHTTPHandlerFunc(aggMetricHandler.instrument(handleAggregate(svc)))
+		invoiceHandler   = makeHTTPHandlerFunc(invMetricHandler.instrument(handleGetInvoice(svc)))
 	)
-	http.HandleFunc("/aggregate", aggMetrichandler.instrument(handleAggregate(svc)))
-	http.HandleFunc("/invoice", invMetrichandler.instrument(handleGetInvoice(svc)))
+
+	http.HandleFunc("/aggregate", aggregateHandler)
+	http.HandleFunc("/invoice", invoiceHandler)
 	http.Handle("/metrics", promhttp.Handler())
 	fmt.Println("HTTP transport running on ", listenAddr)
 	return http.ListenAndServe(listenAddr, nil)

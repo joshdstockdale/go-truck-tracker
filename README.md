@@ -63,5 +63,7 @@ make gateway
 ```
 
 reciever -> localhost:30000/ws
+
 aggregator -> localhost:4000 (http), localhost:4001 (grpc)
+
 gateway -> localhost:6000

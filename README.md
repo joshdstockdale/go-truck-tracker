@@ -1,7 +1,7 @@
 # go-truck-tracker
 Microservices for tracking distances with GPS coordinates.
 
-![alt text](https://github.com/joshdstockdale/go-truck-tracker/blob/main/tracker.png?raw=true)
+![alt text](https://github.com/joshdstockdale/go-truck-tracker/blob/main/trackerWhite.png?raw=true)
 
 ## Kafka container
 ```
